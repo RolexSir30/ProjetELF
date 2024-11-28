@@ -50,7 +50,7 @@ loopComparaison:
     mov al, byte [rsi]           ; on place un octet de la signature dans al
     cmp al, byte [rdi]           ; on compare avec l'octet de buffer contenant le numéro magique de "hello"
     jne pasUnelf                 ; si la comparaison n'est pas bonne, on "saute" dans la fonction pasUnelf
-    inc rsi                      . ON incrémente de rsi et rdi pour comparer octet par octet les deux refistres
+    inc rsi                      ; ON incrémente de rsi et rdi pour comparer octet par octet les deux refistres
     inc rdi
     loop loopComparaison         ; boucle jusqu'à ce que rcx soit 0
 
