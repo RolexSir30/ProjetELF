@@ -11,7 +11,7 @@ messageAbsencePtNote db ' Le fichier ne contient pas de segment ptnote',0xA,0 ; 
 ptNoteOffset1 dq 0x338    ; Premier offset du segment PT_NOTE
 ptNoteOffset2 dq 0x368    ; Deuxième offset du segment PT_NOTE ;  j'ai récupéré ces informations en effectuant la commande  readlf -h [nom du elf]
 
-
+elf_header db 64 dup(0) ; allocation de 64 bits qu'on va utiliser afin de contenir le header.
 
 section .bss
 buffer resb 4 ; Il s'agit du tampon qui lors de l'ouverture du fichier va nous permettre de lire les 4 premiers octets contenant le numéro magique 
