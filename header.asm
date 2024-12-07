@@ -3,7 +3,7 @@ section .data
     magic db 0x7F, 'E', 'L', 'F'
     not_elf_msg db "Not an ELF file.", 10, 0  ; Message à afficher (10 = saut de ligne)
 
-    ; Valeurs des champs ELF donnés
+    ; Valeurs des champs ELF donnés  : valeurs récupérés en tapant la commande readelf -h sur le terminal
     e_phoff_value dq 0x64              ; Début des en-têtes de programme (e_phoff) : 0x64
     e_entry_value dq 0x1060            ; Point d'entrée (e_entry) : 0x1060
     e_phnum_value dw 13                ; Nombre d'en-têtes de programme (e_phnum) : 13
