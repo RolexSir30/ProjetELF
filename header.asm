@@ -28,24 +28,25 @@ section .text
     global _start
 
 _start:
-    ; Ouvrir le fichier
-    mov eax, 5            ; syscall: open
-    lea ebx, [filename]
-    mov ecx, 2            ; O_RDWR
-    int 0x80
-    mov esi, eax          ; Stocker le descripteur de fichier
+    ; Ouvrir le fichier (syscall open)
+    mov rax, 2            ; syscall: open
+    lea rdi, [filename]
+    mov rsi, 0x2          ; O_RDWR
+    mov rdx, 0            ; Aucun mode (permission non spécifiée)
+    syscall
+    mov rsi, rax          ; Stocker le descripteur de fichier
 
-    ; Lire les 4 premiers octets
-    mov eax, 3            ; syscall: read
-    mov ebx, esi
-    lea ecx, [buffer]
-    mov edx, 4
-    int 0x80
+    ; Lire les 4 premiers octets (syscall read)
+    mov rax, 0            ; syscall: read
+    mov rdi, rsi          ; Descripteur de fichier
+    lea rsi, [buffer]     ; Buffer pour stocker les données
+    mov rdx, 4            ; Taille à lire (4 octets)
+    syscall
 
     ; Vérifier le magic number
-    lea edi, [magic]
-    lea esi, [buffer]
-    mov ecx, 4
+    lea rdi, [magic]
+    lea rsi, [buffer]
+    mov rcx, 4            ; Comparer 4 octets
     repe cmpsb
     jne not_elf
 
@@ -53,28 +54,28 @@ _start:
     jmp process_elf
 
 not_elf:
-    ; Afficher un message si ce n'est pas un ELF
-    mov eax, 4            ; syscall: write
-    mov ebx, 1            ; File descriptor: stdout
-    lea ecx, [not_elf_msg] ; Adresse du message
-    mov edx, 17           ; Taille du message
-    int 0x80
+    ; Afficher un message si ce n'est pas un ELF (syscall write)
+    mov rax, 1            ; syscall: write
+    mov rdi, 1            ; File descriptor: stdout
+    lea rsi, [not_elf_msg] ; Adresse du message
+    mov rdx, 17           ; Taille du message
+    syscall
 
-    ; Sortir
-    mov eax, 1            ; syscall: exit
-    xor ebx, ebx          ; Code de retour
-    int 0x80
+    ; Sortir (syscall exit)
+    mov rax, 60           ; syscall: exit
+    xor rdi, rdi          ; Code de retour
+    syscall
 
 process_elf:
-    ; Lire les 64 premiers octets (en-tête ELF) avec sys_pread64
-    mov eax, 17           ; syscall: pread64
-    mov ebx, esi          ; Descripteur de fichier
-    lea ecx, [buffer]     ; Buffer pour stocker l'en-tête
-    mov edx, 64           ; Taille à lire (64 octets)
-    xor esi, esi          ; Offset (début du fichier)
-    int 0x80
+    ; Lire les 64 premiers octets (en-tête ELF) avec syscall pread64
+    mov rax, 17           ; syscall: pread64
+    mov rdi, rsi          ; Descripteur de fichier
+    lea rsi, [buffer]     ; Buffer pour stocker l'en-tête
+    mov rdx, 64           ; Taille à lire (64 octets)
+    xor r10, r10          ; Offset (début du fichier)
+    syscall
 
-    ; Fin du programme
-    mov eax, 1
-    xor ebx, ebx
-    int 0x80
+    ; Fin du programme (syscall exit)
+    mov rax, 60           ; syscall: exit
+    xor rdi, rdi          ; Code de retour
+    syscall
