@@ -3,10 +3,23 @@ section .data
     magic db 0x7F, 'E', 'L', 'F'
     not_elf_msg db "Not an ELF file.", 10, 0  ; Message à afficher (10 = saut de ligne)
 
-    ; Valeurs des champs ELF donnés  : valeurs récupérés en tapant la commande readelf -h sur le terminal
+    ; Valeurs des champs ELF donnés
     e_phoff_value dq 0x64              ; Début des en-têtes de programme (e_phoff) : 0x64
     e_entry_value dq 0x1060            ; Point d'entrée (e_entry) : 0x1060
     e_phnum_value dw 13                ; Nombre d'en-têtes de programme (e_phnum) : 13
+    
+    ; Informations sur PT_NOTE
+    pt_note_1_offset dq 0x0000000000000338  ; Offset de la première entrée PT_NOTE
+    pt_note_1_filesz dq 0x30                ; Taille du fichier pour la première entrée PT_NOTE
+    pt_note_1_vaddr dq 0x0000000000000338  ; Adresse virtuelle pour la première entrée PT_NOTE
+    pt_note_1_flags dq 0x4                 ; Permissions pour la première entrée PT_NOTE (R)
+
+    ; Informations sur PT_NOTE
+    pt_note_2_offset dq 0x0000000000000368  ; Offset de la deuxième entrée PT_NOTE
+    pt_note_2_filesz dq 0x44                ; Taille du fichier pour la deuxième entrée PT_NOTE
+    pt_note_2_vaddr dq 0x0000000000000368  ; Adresse virtuelle pour la deuxième entrée PT_NOTE
+    pt_note_2_flags dq 0x4                 ; Permissions pour la deuxième entrée PT_NOTE (R)
+
 
 section .bss
     buffer resb 64
