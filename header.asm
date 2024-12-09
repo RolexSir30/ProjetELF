@@ -15,7 +15,7 @@ section .data
     pt_note_1_flags dq 0x4                 ; Permissions pour la première entrée PT_NOTE (R)
 
     ; Informations sur PT_NOTE
-    pt_note_2_offset dq 0x0000000000000368  ; Offset de la deuxième entrée PT_NOTE
+    pt_note_2_offset dq 0x0000000000000368  ; Offset de la deuxième entrée PT_NOTE         les offsets je les ai récupérés en faisant la commande readelf sur le terminal
     pt_note_2_filesz dq 0x44                ; Taille du fichier pour la deuxième entrée PT_NOTE
     pt_note_2_vaddr dq 0x0000000000000368  ; Adresse virtuelle pour la deuxième entrée PT_NOTE
     pt_note_2_flags dq 0x4                 ; Permissions pour la deuxième entrée PT_NOTE (R)
