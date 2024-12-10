@@ -4,25 +4,14 @@ section .data
     not_elf_msg db "Not an ELF file.", 10, 0  ; Message à afficher (10 = saut de ligne)
 
     ; Valeurs des champs ELF donnés
-    e_phoff_value dq 0x64              ; Début des en-têtes de programme (e_phoff) : 0x64
+    e_phoff_value dq 0              ; Début des en-têtes de programme (e_phoff) : 0x64 // j'ai tapé readelf -l pour accéder à ces informations
     e_entry_value dq 0x1060            ; Point d'entrée (e_entry) : 0x1060
     e_phnum_value dw 13                ; Nombre d'en-têtes de programme (e_phnum) : 13
     
-    ; Informations sur PT_NOTE
-    pt_note_1_offset dq 0x0000000000000338  ; Offset de la première entrée PT_NOTE
-    pt_note_1_filesz dq 0x30                ; Taille du fichier pour la première entrée PT_NOTE
-    pt_note_1_vaddr dq 0x0000000000000338  ; Adresse virtuelle pour la première entrée PT_NOTE
-    pt_note_1_flags dq 0x4                 ; Permissions pour la première entrée PT_NOTE (R)
-
-    ; Informations sur PT_NOTE
-    pt_note_2_offset dq 0x0000000000000368  ; Offset de la deuxième entrée PT_NOTE         les offsets je les ai récupérés en faisant la commande readelf sur le terminal
-    pt_note_2_filesz dq 0x44                ; Taille du fichier pour la deuxième entrée PT_NOTE
-    pt_note_2_vaddr dq 0x0000000000000368  ; Adresse virtuelle pour la deuxième entrée PT_NOTE
-    pt_note_2_flags dq 0x4                 ; Permissions pour la deuxième entrée PT_NOTE (R)
-
 
 section .bss
     buffer resb 64
+    programmBuffer resb 128
 
 section .text
     global _start
@@ -40,7 +29,7 @@ _start:
     mov rax, 0            ; syscall: read
     mov rdi, rsi          ; Descripteur de fichier
     lea rsi, [buffer]     ; Buffer pour stocker les données
-    mov rdx, 4            ; Taille à lire (4 octets)
+    mov rdx, 64            ; Taille à lire (4 octets)
     syscall
 
     ; Vérifier le magic number
@@ -74,6 +63,56 @@ process_elf:
     mov rdx, 64           ; Taille à lire (64 octets)
     xor r10, r10          ; Offset (début du fichier)
     syscall
+
+
+   ; Extraire e_phoff (offset des en-têtes de programme)
+    mov rax, [buffer + 32] ; e_phoff est à l'offset 32 dans l'en-tête ELF qui vaut ici 0x0000040 => 32 (voir screen du rapport pour voir dans gdb sa valeur dans le buffer)
+    
+
+    mov r10w, 13  ; calcul du nombre de programme dans le programme header.
+    mov rdi, rsi          ; Descripteur de fichier
+    lea rsi, [programmBuffer]
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+     
+   
+    
+
+
+    ; Sortir
+    mov rax, 60
+    xor rdi, rdi
+    syscall
+
+
 
     ; Fin du programme (syscall exit)
     mov rax, 60           ; syscall: exit
