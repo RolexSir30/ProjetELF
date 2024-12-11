@@ -1,54 +1,42 @@
 section .data
-    filename db 'hello', 0  ; Nom du fichier ELF
-    octet_position equ 10          ; Position de l'octet à modifier (0-indexed)
-    new_value db 0xFF               ; Nouvelle valeur de l'octet
+    filename db 'changement', 0
+    octet_position equ 0x338
+    new_value db 0x01
 
 section .bss
-    file_descriptor resq 1          ; Descripteur de fichier (64 bits)
-    buffer resb 256                  ; Tampon pour lire le fichier
+    file_descriptor resq 1
 
 section .text
     global _start
 
 _start:
-    ; Ouvrir le fichier en mode lecture/écriture
-    mov rax, 2                       ; sys_open
-    mov rdi, filename                ; Nom du fichier
-    mov rsi, 2                       ; O_RDWR
+    ; Ouvrir le fichier
+    mov rax, 2
+    mov rdi, filename
+    mov rsi, 2          ; O_RDWR
     syscall
-    mov [file_descriptor], rax       ; Stocker le descripteur
+    mov [file_descriptor], rax
 
-    ; Lire le fichier
-    mov rax, 0                       ; sys_read
-    mov rdi, [file_descriptor]       ; Descripteur de fichier
-    mov rsi, buffer                  ; Tampon
-    mov rdx, 256                     ; Lire jusqu'à 256 octets (ajuster si nécessaire)
-    syscall
-
-    ; Modifier l'octet à la position spécifiée
-    mov al, [new_value]             ; Charger la nouvelle valeur dans al
-    mov byte [buffer + octet_position], al  ; Modifier l'octet
-
-    ; Revenir au début du fichier
-    mov rax, 8                       ; sys_lseek
-    mov rdi, [file_descriptor]       ; Descripteur de fichier
-    xor rsi, rsi                     ; Offset 0 (début du fichier)
-    mov rdx, 0                       ; SEEK_SET
+    ; Positionner le curseur
+    mov rax, 8          ; sys_lseek
+    mov rdi, [file_descriptor]
+    mov rsi, octet_position
+    mov rdx, 0          ; SEEK_SET
     syscall
 
-    ; Écrire le fichier
-    mov rax, 1                       ; sys_write
-    mov rdi, [file_descriptor]       ; Descripteur de fichier
-    mov rsi, buffer                  ; Tampon
-    mov rdx, 256                     ; Écrire jusqu'à 256 octets (ajuster si nécessaire)
+    ; Écrire le nouvel octet
+    mov rax, 1
+    mov rdi, [file_descriptor]
+    mov rsi, new_value
+    mov rdx, 1
     syscall
 
     ; Fermer le fichier
-    mov rax, 3                       ; sys_close
-    mov rdi, [file_descriptor]       ; Descripteur de fichier
+    mov rax, 3
+    mov rdi, [file_descriptor]
     syscall
 
     ; Sortir
-    mov rax, 60                      ; sys_exit
-    xor rdi, rdi                     ; Code de sortie 0
+    mov rax, 60
+    xor rdi, rdi
     syscall
