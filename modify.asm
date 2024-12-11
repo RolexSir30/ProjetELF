@@ -1,7 +1,7 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 0x338 j'ai récupéré cette info avec readel - l hello
-    new_value db 0x01
+    octet_position equ 456 ; voir read me pour voir comment j'ai trouvé cette valeur.
+    new_value db 1
 
 section .bss
     file_descriptor resq 1
