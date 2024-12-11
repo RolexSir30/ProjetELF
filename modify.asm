@@ -1,5 +1,5 @@
 section .data
-    filename db 'changement', 0
+    filename db 'hello', 0
     octet_position equ 0x338
     new_value db 0x01
 
