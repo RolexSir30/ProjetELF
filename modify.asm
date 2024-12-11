@@ -1,6 +1,6 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 456 ; voir read me pour voir comment j'ai trouvé cette valeur.
+    octet_position equ 456 ; j'ai changé manuellement le ptnote en ptload puis j'ai comparé avec cmp (commande linux) avec le binaire modifié quelle octet avait été modifié
     new_value db 1
 
 section .bss
