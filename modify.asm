@@ -1,11 +1,11 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 456 
-    flags_position equ 460  
+    octet_position equ 456 -- obtenu en effectuant un chagement manuel et en comparant les octets avec une copue de hello
+    flags_position equ 460  il s'agit de la position de octet_position auquel on ajoute. 
     octetentry_position equ 24 ; Offset correct pour e_entry (64 bits)
-    new_flags dd 0x00000001
-    new_value db 1
-    newentry_adress dq 0x0338 ; Utiliser dq pour une valeur 64 bits
+    new_flags dd 0x00000001 -flags d'exection = 1
+    new_value db 1 -- valeur que va prendre l'octet_position
+    newentry_adress dq 0x0338 ; adresse virtuelle obtenue en faisant la commande readme sur github.
 
 section .bss
     file_descriptor resq 1
