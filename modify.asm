@@ -1,14 +1,14 @@
 section .data
     filename db 'hello', 0
-    flags_offset equ 460
-    target_offset equ 456
-    entry_offset equ 24
+    octet_position equ 456 
+    flags_position equ 460  
+    octetentry_position equ 24 ; Offset correct pour e_entry (64 bits)
     new_flags dd 0x00000001
-    new_byte db 1
-    new_entry dq 0x0338
+    new_value db 1
+    newentry_adress dq 0x0338 ; Utiliser dq pour une valeur 64 bits
 
 section .bss
-    fd resq 1
+    file_descriptor resq 1
 
 section .text
     global _start
@@ -17,52 +17,54 @@ _start:
     ; Ouvrir le fichier
     mov rax, 2
     mov rdi, filename
-    mov rsi, 2
+    mov rsi, 2          
     syscall
-    mov [fd], rax
+    mov [file_descriptor], rax
 
-    ; Modifier les flags
-    mov rax, 8
-    mov rdi, [fd]
-    mov rsi, flags_offset
-    mov rdx, 0
+    ; Positionner le curseur pour les flags
+    mov rax, 8          
+    mov rdi, [file_descriptor]
+    mov rsi, flags_position
+    mov rdx, 0         
     syscall
 
-    mov rax, 1
-    mov rdi, [fd]
+    ; Écrire les nouveaux flags
+    mov rax, 1         
+    mov rdi, [file_descriptor]
     mov rsi, new_flags
-    mov rdx, 4
+    mov rdx, 4          
     syscall
 
-    ; Modifier l'octet cible
-    mov rax, 8
-    mov rdi, [fd]
-    mov rsi, target_offset
-    mov rdx, 0
+    ; Repositionner le curseur pour l'octet à modifier
+    mov rax, 8         
+    mov rdi, [file_descriptor]
+    mov rsi, octet_position
+    mov rdx, 0          
     syscall
 
+    ; Écrire le nouvel octet
     mov rax, 1
-    mov rdi, [fd]
-    mov rsi, new_byte
+    mov rdi, [file_descriptor]
+    mov rsi, new_value
     mov rdx, 1
     syscall
 
     ; Modifier e_entry
-    mov rax, 8
-    mov rdi, [fd]
-    mov rsi, entry_offset
-    mov rdx, 0
+    mov rax, 8          
+    mov rdi, [file_descriptor]
+    mov rsi, octetentry_position ; Utiliser l'offset correct
+    mov rdx, 0          
     syscall
 
-    mov rax, 1
-    mov rdi, [fd]
-    mov rsi, new_entry
-    mov rdx, 8
+    mov rax, 1          
+    mov rdi, [file_descriptor]
+    mov rsi, newentry_adress
+    mov rdx, 8          ; 8 octets pour e_entry (64 bits)
     syscall
 
     ; Fermer le fichier
     mov rax, 3
-    mov rdi, [fd]
+    mov rdi, [file_descriptor]
     syscall
 
     ; Sortir
