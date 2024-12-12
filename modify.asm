@@ -1,12 +1,14 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 456 ; voir read me pour voir comment j'ai trouvé cette valeur.
-    flags_position equ 460  ; Position du champ p_flags
-    new_flags dd 0x00000001 ; Valeur pour PF_X (exécutable)
-    new_value db 1
+    flags_offset equ 460
+    target_offset equ 456
+    entry_offset equ 24
+    new_flags dd 0x00000001
+    new_byte db 1
+    new_entry dq 0x0338
 
 section .bss
-    file_descriptor resq 1
+    fd resq 1
 
 section .text
     global _start
@@ -15,41 +17,52 @@ _start:
     ; Ouvrir le fichier
     mov rax, 2
     mov rdi, filename
-    mov rsi, 2          ; O_RDWR
+    mov rsi, 2
     syscall
-    mov [file_descriptor], rax
+    mov [fd], rax
 
-    ; Positionner le curseur pour les flags
-    mov rax, 8          ; sys_lseek
-    mov rdi, [file_descriptor]
-    mov rsi, flags_position
-    mov rdx, 0          ; SEEK_SET
-    syscall
-
-    ; Écrire les nouveaux flags
-    mov rax, 1          ; sys_write
-    mov rdi, [file_descriptor]
-    mov rsi, new_flags
-    mov rdx, 4          ; Taille de la valeur (4 octets pour un dword)
+    ; Modifier les flags
+    mov rax, 8
+    mov rdi, [fd]
+    mov rsi, flags_offset
+    mov rdx, 0
     syscall
 
-    ; Repositionner le curseur pour l'octet à modifier
-    mov rax, 8          ; sys_lseek
-    mov rdi, [file_descriptor]
-    mov rsi, octet_position
-    mov rdx, 0          ; SEEK_SET
-    syscall
-
-    ; Écrire le nouvel octet
     mov rax, 1
-    mov rdi, [file_descriptor]
-    mov rsi, new_value
+    mov rdi, [fd]
+    mov rsi, new_flags
+    mov rdx, 4
+    syscall
+
+    ; Modifier l'octet cible
+    mov rax, 8
+    mov rdi, [fd]
+    mov rsi, target_offset
+    mov rdx, 0
+    syscall
+
+    mov rax, 1
+    mov rdi, [fd]
+    mov rsi, new_byte
     mov rdx, 1
+    syscall
+
+    ; Modifier e_entry
+    mov rax, 8
+    mov rdi, [fd]
+    mov rsi, entry_offset
+    mov rdx, 0
+    syscall
+
+    mov rax, 1
+    mov rdi, [fd]
+    mov rsi, new_entry
+    mov rdx, 8
     syscall
 
     ; Fermer le fichier
     mov rax, 3
-    mov rdi, [file_descriptor]
+    mov rdi, [fd]
     syscall
 
     ; Sortir
