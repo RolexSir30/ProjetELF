@@ -1,6 +1,8 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 456 ; j'ai changé manuellement le ptnote en ptload puis j'ai comparé avec cmp (commande linux) avec le binaire modifié quelle octet avait été modifié ensuite j'ai simplement éris dans le programme quel octet modifié.
+    octet_position equ 456 ; voir read me pour voir comment j'ai trouvé cette valeur.
+    flags_position equ 460  ; Position du champ p_flags
+    new_flags dd 0x00000001 ; Valeur pour PF_X (exécutable)
     new_value db 1
 
 section .bss
@@ -17,7 +19,21 @@ _start:
     syscall
     mov [file_descriptor], rax
 
-    ; Positionner le curseur
+    ; Positionner le curseur pour les flags
+    mov rax, 8          ; sys_lseek
+    mov rdi, [file_descriptor]
+    mov rsi, flags_position
+    mov rdx, 0          ; SEEK_SET
+    syscall
+
+    ; Écrire les nouveaux flags
+    mov rax, 1          ; sys_write
+    mov rdi, [file_descriptor]
+    mov rsi, new_flags
+    mov rdx, 4          ; Taille de la valeur (4 octets pour un dword)
+    syscall
+
+    ; Repositionner le curseur pour l'octet à modifier
     mov rax, 8          ; sys_lseek
     mov rdi, [file_descriptor]
     mov rsi, octet_position
