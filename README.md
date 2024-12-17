@@ -102,11 +102,7 @@ ld projet.o -o projet
 
 ## Auteur
 
-Votre nom ou pseudonyme.
-
+Saaruhan Sellappah
 ---
 
-## Licence
-
-Ajoutez ici la licence de votre choix (par exemple, MIT, GPL, etc.).
 
